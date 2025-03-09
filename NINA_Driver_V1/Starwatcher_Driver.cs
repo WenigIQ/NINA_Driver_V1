@@ -11,7 +11,7 @@ using System.Runtime.InteropServices;
 
 namespace NINA_Driver_V1
 {
-    [Guid("YOUR-GUID-HERE")] //benötigt einen Einzigartigen GUID (Globally Unique Identifier)
+    [Guid("0e04bcfb-269d-46de-ae4b-8e8fb0fb3b22")] //benötigt einen Einzigartigen GUID (Globally Unique Identifier)
     [ClassInterface(ClassInterfaceType.None)]//keine automatische COm-Schnittstelle generieren
     public class Starwatcher_Driver : ITelescopeV3
     {
