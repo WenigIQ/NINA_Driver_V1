@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.13.35825.156 d17.13
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NINA_Driver_V1", "NINA_Driver_V1\NINA_Driver_V1.csproj", "{6AC65995-6304-4935-AA0C-AAEB0AE4C5CC}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{6AC65995-6304-4935-AA0C-AAEB0AE4C5CC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6AC65995-6304-4935-AA0C-AAEB0AE4C5CC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6AC65995-6304-4935-AA0C-AAEB0AE4C5CC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6AC65995-6304-4935-AA0C-AAEB0AE4C5CC}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {3E6B2BEE-A621-4459-AF7F-FC120E63252F}
+	EndGlobalSection
+EndGlobal
