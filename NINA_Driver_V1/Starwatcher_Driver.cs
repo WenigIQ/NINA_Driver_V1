@@ -7,7 +7,7 @@ using ASCOM.Utilities;
 
 namespace NINA_Driver_V1
 {
-    [Guid("0e04bcfb-269d-46de-ae4b-8e8fb0fb3b22")] // benötigt einen einzigartigen GUID (Globally Unique Identifier)
+    [Guid("6ac65995-6304-4935-aa0c-aaeb0ae4c5cc")] // benötigt einen einzigartigen GUID (Globally Unique Identifier)
     [ClassInterface(ClassInterfaceType.None)] // keine automatische COM-Schnittstelle generieren
     public class Starwatcher_Driver : IDomeV2
     {
