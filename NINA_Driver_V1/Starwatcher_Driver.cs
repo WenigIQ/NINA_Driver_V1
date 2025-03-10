@@ -14,7 +14,6 @@ namespace NINA_Driver_V1
         private const string driverID = "ASCOM.NINA_Driver_V1.Starwatcher_Driver";
         private const string driverDescription = "Starwatcher Dome Driver";
 
-        // Das Assembly muss als COM-Objekt registriert werden, damit es von ASCOM erkannt wird.
         [ComRegisterFunction]
         public static void RegisterASCOM(Type t)
         {
@@ -27,8 +26,6 @@ namespace NINA_Driver_V1
             Registration.Unregister(t);
         }
 
-        // Diese Methoden werden aufgerufen, wenn das Assembly registriert oder deregistriert wird. So kann auch
-        //Windows auf den Treiber zugreifen
         public static class Registration
         {
             public static void Register(Type t)
@@ -53,8 +50,6 @@ namespace NINA_Driver_V1
         public void SetupDialog()
         {
             using (var form = new SetupDialogForm())
-            {
-                // Laden Sie die gespeicherten Einstellungen und zeigen Sie sie im Dialog an
                 using (var profile = new Profile())
                 {
                     profile.DeviceType = "Dome";
@@ -71,7 +66,6 @@ namespace NINA_Driver_V1
                     }
                 }
             }
-        }
 
         // Connect & Disconnect
         private bool connected = false;
