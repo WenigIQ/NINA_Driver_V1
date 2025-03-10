@@ -34,6 +34,29 @@ namespace NINA_Driver_V1
             Console.WriteLine("Disconnected from Starwatcher");
         }
         //__________________________________________________________
+        //Park
+        bool AtPark = false;
+        public bool AtPark
+        {
+            get { return AtPark; }
+        }
+
+        public void Park()
+        {
+            AtPark = true;
+            Console.WriteLine("Parked");
+        }
+
+        //__________________________________________________________
+        //SlewtoAltAz
+
+        public void SlewToAltAz(double Azimuth, double Altitude)
+        {
+            Console.WriteLine("Slewing to Azimuth: " + Azimuth);
+        }
+
+        //__________________________________________________________
+
 
         public void AbortSlew()
         {
@@ -75,10 +98,7 @@ namespace NINA_Driver_V1
             throw new NotImplementedException();
         }
 
-        public void Park()
-        {
-            throw new NotImplementedException();
-        }
+        
 
         public void PulseGuide(GuideDirections Direction, int Duration)
         {
@@ -162,7 +182,6 @@ namespace NINA_Driver_V1
 
         public bool connected { set => throw new NotImplementedException(); } 
         public bool AtHome => throw new NotImplementedException();
-        public bool AtPark => throw new NotImplementedException();
         public double Azimuth => throw new NotImplementedException();
         public bool CanFindHome => throw new NotImplementedException();
         public bool CanPark => throw new NotImplementedException();
