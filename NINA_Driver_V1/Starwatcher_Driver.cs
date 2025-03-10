@@ -20,7 +20,6 @@ namespace NINA_Driver_V1
         public bool Connected
         {
             get { return connected; }
-            set { connected = value; }
         }
 
         public void Connect()
@@ -160,6 +159,8 @@ namespace NINA_Driver_V1
         {
             throw new NotImplementedException();
         }
+
+        public bool connected { set => throw new NotImplementedException(); } 
         public bool AtHome => throw new NotImplementedException();
         public bool AtPark => throw new NotImplementedException();
         public double Azimuth => throw new NotImplementedException();
