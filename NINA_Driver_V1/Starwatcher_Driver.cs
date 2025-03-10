@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Runtime.InteropServices;
+using System.Windows.Forms;
 using ASCOM.DeviceInterface;
 using ASCOM.Utilities;
 
@@ -10,8 +11,24 @@ namespace NINA_Driver_V1
     [ClassInterface(ClassInterfaceType.None)] // keine automatische COM-Schnittstelle generieren
     public class Starwatcher_Driver : IDomeV2
     {
-        // Das Assembly muss als COM-Objekt registriert werden, damit es von anderen Programmen verwendet werden kann.
-        // Diese Methoden werden aufgerufen, wenn das Assembly registriert oder deregistriert wird.
+        private const string driverID = "ASCOM.NINA_Driver_V1.Starwatcher_Driver";
+        private const string driverDescription = "Starwatcher Dome Driver";
+
+        // Das Assembly muss als COM-Objekt registriert werden, damit es von ASCOM erkannt wird.
+        [ComRegisterFunction]
+        public static void RegisterASCOM(Type t)
+        {
+            Registration.Register(t);
+        }
+
+        [ComUnregisterFunction]
+        public static void UnregisterASCOM(Type t)
+        {
+            Registration.Unregister(t);
+        }
+
+        // Diese Methoden werden aufgerufen, wenn das Assembly registriert oder deregistriert wird. So kann auch
+        //Windows auf den Treiber zugreifen
         public static class Registration
         {
             public static void Register(Type t)
@@ -19,7 +36,7 @@ namespace NINA_Driver_V1
                 using (var profile = new Profile())
                 {
                     profile.DeviceType = "Dome";
-                    profile.Register(t.FullName, "Starwatcher_Dome_Driver");
+                    profile.Register(driverID, driverDescription);
                 }
             }
 
@@ -28,7 +45,30 @@ namespace NINA_Driver_V1
                 using (var profile = new Profile())
                 {
                     profile.DeviceType = "Dome";
-                    profile.Unregister(t.FullName);
+                    profile.Unregister(driverID);
+                }
+            }
+        }
+
+        public void SetupDialog()
+        {
+            using (var form = new SetupDialogForm())
+            {
+                // Laden Sie die gespeicherten Einstellungen und zeigen Sie sie im Dialog an
+                using (var profile = new Profile())
+                {
+                    profile.DeviceType = "Dome";
+                    form.SettingValue = profile.GetValue(driverID, "SettingName", string.Empty, "DefaultSettingValue");
+                }
+
+                if (form.ShowDialog() == DialogResult.OK)
+                {
+                    // Speichern Sie die Einstellungen aus dem Dialogfenster in der ASCOM-Profilklasse
+                    using (var profile = new Profile())
+                    {
+                        profile.DeviceType = "Dome";
+                        profile.WriteValue(driverID, "SettingName", form.SettingValue);
+                    }
                 }
             }
         }
@@ -75,145 +115,163 @@ namespace NINA_Driver_V1
         // Noch zu Implementieren
         public void AbortSlew()
         {
-            throw new NotImplementedException();
+            Console.WriteLine("Abort Slew");
         }
 
         public double Altitude
         {
-            get { throw new NotImplementedException(); }
+            get { return 0.0; }
         }
 
         public bool AtHome
         {
-            get { throw new NotImplementedException(); }
+            get { return false; }
         }
 
         public double Azimuth
         {
-            get { throw new NotImplementedException(); }
+            get { return 0.0; }
         }
 
         public bool CanFindHome
         {
-            get { throw new NotImplementedException(); }
+            get { return false; }
         }
 
         public bool CanPark
         {
-            get { throw new NotImplementedException(); }
+            get { return true; }
         }
 
         public bool CanSetAltitude
         {
-            get { throw new NotImplementedException(); }
+            get { return false; }
         }
 
         public bool CanSetAzimuth
         {
-            get { throw new NotImplementedException(); }
+            get { return true; }
         }
 
         public bool CanSetPark
         {
-            get { throw new NotImplementedException(); }
+            get { return true; }
         }
 
         public bool CanSetShutter
         {
-            get { throw new NotImplementedException(); }
+            get { return false; }
         }
 
         public bool CanSlave
         {
-            get { throw new NotImplementedException(); }
+            get { return false; }
         }
 
         public bool CanSyncAzimuth
         {
-            get { throw new NotImplementedException(); }
+            get { return true; }
         }
 
         public void CloseShutter()
         {
-            throw new NotImplementedException();
+            Console.WriteLine("Close Shutter");
         }
 
         public void FindHome()
         {
-            throw new NotImplementedException();
+            Console.WriteLine("Find Home");
         }
 
         public void OpenShutter()
         {
-            throw new NotImplementedException();
+            Console.WriteLine("Open Shutter");
         }
 
         public void SetPark()
         {
-            throw new NotImplementedException();
+            Console.WriteLine("Set Park");
         }
 
         public ShutterState ShutterStatus
         {
-            get { throw new NotImplementedException(); }
+            get { return ShutterState.shutterClosed; }
         }
 
         public bool Slaved
         {
-            get { throw new NotImplementedException(); }
-            set { throw new NotImplementedException(); }
+            get { return false; }
+            set { Console.WriteLine("Set Slaved: " + value); }
         }
 
         public void SlewToAltitude(double Altitude)
         {
-            throw new NotImplementedException();
+            Console.WriteLine("Slew to Altitude: " + Altitude);
         }
 
         public bool Slewing
         {
-            get { throw new NotImplementedException(); }
+            get { return false; }
         }
 
         public void SyncToAzimuth(double Azimuth)
         {
-            throw new NotImplementedException();
-        }
-
-        public void SetupDialog()
-        {
-            throw new NotImplementedException();
+            Console.WriteLine("Sync to Azimuth: " + Azimuth);
         }
 
         public string Action(string ActionName, string ActionParameters)
         {
-            throw new NotImplementedException();
+            throw new ASCOM.ActionNotImplementedException("Action " + ActionName + " is not implemented by this driver");
         }
 
         public void CommandBlind(string Command, bool Raw)
         {
-            throw new NotImplementedException();
+            throw new ASCOM.MethodNotImplementedException("CommandBlind is not implemented by this driver");
         }
 
         public bool CommandBool(string Command, bool Raw)
         {
-            throw new NotImplementedException();
+            throw new ASCOM.MethodNotImplementedException("CommandBool is not implemented by this driver");
         }
 
         public string CommandString(string Command, bool Raw)
         {
-            throw new NotImplementedException();
+            throw new ASCOM.MethodNotImplementedException("CommandString is not implemented by this driver");
         }
 
         public void Dispose()
         {
-            throw new NotImplementedException();
+            // Bereinigen Sie alle Ressourcen hier
         }
 
-        public string Description => throw new NotImplementedException();
-        public string DriverInfo => throw new NotImplementedException();
-        public string DriverVersion => throw new NotImplementedException();
-        public short InterfaceVersion => throw new NotImplementedException();
-        public string Name => throw new NotImplementedException();
-        public ArrayList SupportedActions => throw new NotImplementedException();
+        public string Description
+        {
+            get { return driverDescription; }
+        }
+
+        public string DriverInfo
+        {
+            get { return "Starwatcher Dome Driver Version 1.0"; }
+        }
+
+        public string DriverVersion
+        {
+            get { return "1.0"; }
+        }
+
+        public short InterfaceVersion
+        {
+            get { return 2; }
+        }
+
+        public string Name
+        {
+            get { return "Starwatcher Dome Driver"; }
+        }
+
+        public ArrayList SupportedActions
+        {
+            get { return new ArrayList(); }
+        }
     }
 }
