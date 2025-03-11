@@ -32,6 +32,13 @@
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <RegisterForComInterop>true</RegisterForComInterop>
+  </PropertyGroup>
+  <PropertyGroup>
+    <SignAssembly>true</SignAssembly>
+  </PropertyGroup>
+  <PropertyGroup>
+    <AssemblyOriginatorKeyFile>StarwatcherDriver_Key_V1.pfx</AssemblyOriginatorKeyFile>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="ASCOM.Alpaca, Version=2.0.9.0, Culture=neutral, PublicKeyToken=565de7938946fba7, processorArchitecture=MSIL">
@@ -44,7 +51,8 @@
       <HintPath>..\packages\ASCOM.Common.Components.2.0.9\lib\netstandard2.0\ASCOM.Common.dll</HintPath>
     </Reference>
     <Reference Include="ASCOM.DeviceInterfaces, Version=6.0.0.0, Culture=neutral, PublicKeyToken=565de7938946fba7, processorArchitecture=MSIL">
-      <HintPath>..\packages\ASCOM.DeviceInterfaces.7.0.0\lib\net472\ASCOM.DeviceInterfaces.dll</HintPath>
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\..\..\..\Program Files (x86)\ASCOM\Platform 6 Developer Components\Components\Platform6\ASCOM.DeviceInterfaces.dll</HintPath>
     </Reference>
     <Reference Include="ASCOM.Exceptions, Version=6.0.0.0, Culture=neutral, PublicKeyToken=565de7938946fba7, processorArchitecture=MSIL">
       <HintPath>..\packages\ASCOM.Exception.Library.7.0.1\lib\net472\ASCOM.Exceptions.dll</HintPath>
@@ -52,7 +60,10 @@
     <Reference Include="ASCOM.Tools, Version=2.0.9.0, Culture=neutral, PublicKeyToken=565de7938946fba7, processorArchitecture=MSIL">
       <HintPath>..\packages\ASCOM.Tools.2.0.9\lib\netstandard2.0\ASCOM.Tools.dll</HintPath>
     </Reference>
-    <Reference Include="ASCOM.Utilities, Version=6.0.0.0, Culture=neutral, PublicKeyToken=565de7938946fba7, processorArchitecture=MSIL" />
+    <Reference Include="ASCOM.Utilities, Version=5.5.1.0, Culture=neutral, PublicKeyToken=565de7938946fba7, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\..\..\..\Program Files (x86)\ASCOM\Platform 6 Developer Components\Components\Platform6\ASCOM.Utilities.dll</HintPath>
+    </Reference>
     <Reference Include="Microsoft.Bcl.AsyncInterfaces, Version=8.0.0.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
       <HintPath>..\packages\Microsoft.Bcl.AsyncInterfaces.8.0.0\lib\net462\Microsoft.Bcl.AsyncInterfaces.dll</HintPath>
     </Reference>
@@ -103,7 +114,6 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="CodeFile1.cs" />
     <Compile Include="SetupDialog_Form.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -113,6 +123,10 @@
   <ItemGroup>
     <None Include="app.config" />
     <None Include="packages.config" />
+    <None Include="StarwatcherDriver_Key_V1.pfx" />
+  </ItemGroup>
+  <ItemGroup>
+    <WCFMetadata Include="Connected Services\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
@@ -121,4 +135,10 @@
     </PropertyGroup>
     <Error Condition="!Exists('..\packages\ASCOM.Exception.Library.7.0.1\build\ASCOM.Exception.Library.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\ASCOM.Exception.Library.7.0.1\build\ASCOM.Exception.Library.props'))" />
   </Target>
+  <PropertyGroup>
+    <PostBuildEvent>if "$(ConfigurationName)" == "Release" (
+    echo Registriere Treiber...
+    %25SystemRoot%25\Microsoft.NET\Framework64\v4.0.30319\regasm.exe /codebase "$(TargetPath)"
+)</PostBuildEvent>
+  </PropertyGroup>
 </Project>
