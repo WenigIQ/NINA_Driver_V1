@@ -26,9 +26,9 @@ namespace NINA_Driver_V1
     public class Starwatcher_Driver : IDomeV2
     {
         // Konsistente ID verwenden
-        private const string driverID = "Driver_V1.Starwatcher_BenHfr";
-        private const string driverDescription = "Starwatcher Maturaprojekt 24/25";
-        private const string driverName = "Starwatcher Ben Hofer";
+        private const string driverID = "Driver_V1_Starwatcher_BenHfr";
+        private const string driverDescription = "Starwatcher Maturaprojekt 24/25 von Ben Hofer";
+        private const string driverName = "Starwatcher Driver BnHfr";
 
         // TraceLogger für Debugging
         private TraceLogger tl;
