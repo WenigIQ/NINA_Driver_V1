@@ -20,7 +20,7 @@ namespace NINA_Driver_V1
     //von der Programmiersprache, aufeinander zuzugreifen.
     [Guid("b535bec2-a119-4b89-b727-84add9028406")] //GUID: Eine eindeutige Kennung für die COM-Klasse
     [ClassInterface(ClassInterfaceType.None)]      //ClassInterface: Gibt an, dass keine automatische Schnittstelle von Windows erstellt wird 
-    [ProgId("Driver_V1.Starwatcher_BenHfr")]       //Progid: Eindeutiger Name für die COM-Klasse
+    [ProgId("Driver_V1_Starwatcher_BenHfr")]       //Progid: Eindeutiger Name für die COM-Klasse
     [ComVisible(true)]                             //Macht die Klasse für COM sichtbar (WICHTIG). Muss in Assembly.cs auf false gesetzt werden
                                                    //damit nicht das komplette Programm für den COM-Compiler sichtbar ist.
     public class Starwatcher_Driver : IDomeV2
