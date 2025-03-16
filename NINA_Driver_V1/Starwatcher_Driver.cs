@@ -116,6 +116,8 @@ namespace NINA_Driver_V1
         }
         //----------------------------------------------------------------------------------------
         // Connect & Disconnect
+        //Diese Methoden ermöglichen es, eine Verbindung zur Kuppel herzustellen und zu trennen. Die Connected-Eigenschaft von IDomeV2 steuert
+        //den Verbindungsstatus.
         private bool connected;
         public bool Connected
         {
@@ -144,6 +146,9 @@ namespace NINA_Driver_V1
             connected = false;
             tl.LogMessage("Disconnect","Disconnected from Starwatcher");
         }
+        //----------------------------------------------------------------------------------------
+        //Der Rest des Codes implementiert die Methoden und Eigenschaften der IDomeV2-Schnittstelle, die für die Steuerung einer Kuppel
+        //gebraucht werden könnten.
 
         // Park
         private bool atPark = false;

@@ -38,7 +38,7 @@
     <SignAssembly>true</SignAssembly>
   </PropertyGroup>
   <PropertyGroup>
-    <AssemblyOriginatorKeyFile>StarwatcherDriver_Key_V1.pfx</AssemblyOriginatorKeyFile>
+    <AssemblyOriginatorKeyFile>StarwatcherDriver_Key.snk</AssemblyOriginatorKeyFile>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="ASCOM.Alpaca, Version=2.0.9.0, Culture=neutral, PublicKeyToken=565de7938946fba7, processorArchitecture=MSIL">
@@ -123,7 +123,7 @@
   <ItemGroup>
     <None Include="app.config" />
     <None Include="packages.config" />
-    <None Include="StarwatcherDriver_Key_V1.pfx" />
+    <None Include="StarwatcherDriver_Key.snk" />
   </ItemGroup>
   <ItemGroup>
     <WCFMetadata Include="Connected Services\" />

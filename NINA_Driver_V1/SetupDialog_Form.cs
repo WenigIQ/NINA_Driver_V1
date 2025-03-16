@@ -7,7 +7,7 @@ namespace NINA_Driver_V1
     [ComVisible(false)] //Darf nicht für COM sichtbar sein, da sonst der COM-Compiler einen Fehler wirft.
 
     //Dieser Code ist ein Windowsform (von KI generiert) und wird für die Einstellungen des Treibers verwendet. Da ich es nicht benötige,
-    //kann man nicht wirklich etwas einstellen
+    //kann man nicht wirklich etwas einstellen.
     public partial class SetupDialogForm : Form
     {
         public string SettingValue1 { get; set; }
