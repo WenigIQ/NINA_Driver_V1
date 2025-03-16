@@ -341,7 +341,7 @@ namespace NINA_Driver_V1
 
         public string Name
         {
-            get { return "Starwatcher Dome Driver"; }
+            get { return "Starwatcher_Driver_BnHfr"; }
         }
 
         public ArrayList SupportedActions
