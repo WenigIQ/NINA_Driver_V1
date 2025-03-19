@@ -166,22 +166,37 @@ namespace NINA_Driver_V1
             atPark = true;
             tl.LogMessage("Park", "Parked");
         }
-
+        public void SetPark()
+        {
+            tl.LogMessage("SetPark", "Set Park");
+        }
+        //----------------------------------------------------------------------------------------
         // Slew to Azimuth
 
-       /* public double Azimuth
-        {
-            get
-            {
-                // Implementieren Sie die echte Azimuth-Abfrage
-                return ReadAzimuthFromHardware();
-            }
-        }*/
+        /* public double Azimuth
+         {
+             get
+             {
+                 // Implementieren Sie die echte Azimuth-Abfrage
+                 return ReadAzimuthFromHardware();
+             }
+         }*/
         public void SlewToAzimuth(double Azimuth)
         {
             tl.LogMessage("SlewToAzimuth", "Slewing to Azimuth: " + Azimuth); 
         }
 
+        public void AbortSlew()
+        {
+            tl.LogMessage("AbortSlew", "Abort Slew");
+        }
+
+        public bool Slewing
+        {
+            get { return false; }
+        }
+
+        //----------------------------------------------------------------------------------------
         //Luke öffnen und schließen
 
         public void OpenShutter()
@@ -192,13 +207,14 @@ namespace NINA_Driver_V1
         {
             tl.LogMessage("CloseShutter", "Close Shutter");
         }
+        public ShutterState ShutterStatus
+        {
+            get { return ShutterState.shutterClosed; }
+        }
 
 
         // Noch zu Implementieren
-        public void AbortSlew()
-        {
-            tl.LogMessage("AbortSlew", "Abort Slew");
-        }
+
 
         public double Altitude
         {
@@ -218,10 +234,7 @@ namespace NINA_Driver_V1
         public bool CanFindHome
         {
             get { return false; }
-        }
-
-        
-
+        }  
         public bool CanSetAltitude
         {
             get { return false; }
@@ -252,24 +265,10 @@ namespace NINA_Driver_V1
             get { return true; }
         }
 
-        
-
         public void FindHome()
         {
             tl.LogMessage("FindHome", "Find Home");
-        }
-
-
-
-        public void SetPark()
-        {
-            tl.LogMessage("SetPark", "Set Park");
-        }
-
-        public ShutterState ShutterStatus
-        {
-            get { return ShutterState.shutterClosed; }
-        }
+        }      
 
         public bool Slaved
         {
@@ -280,12 +279,7 @@ namespace NINA_Driver_V1
         public void SlewToAltitude(double Altitude)
         {
             tl.LogMessage("SlewToAltitude", "Slew to Altitude: " + Altitude);
-        }
-
-        public bool Slewing
-        {
-            get { return false; }
-        }
+        }      
 
         public void SyncToAzimuth(double Azimuth)
         {
