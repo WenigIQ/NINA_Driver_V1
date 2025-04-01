@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.IO;
+using System.IO.Ports;
 using System.Runtime.InteropServices;
 using System.Security.Cryptography;
 using System.Threading.Tasks.Sources;
@@ -29,9 +30,19 @@ namespace NINA_Driver_V1
         private const string driverID = "Driver_V1_Starwatcher_BenHfr";
         private const string driverDescription = "Starwatcher Maturaprojekt 24/25 von Ben Hofer";
         private const string driverName = "Starwatcher Driver BnHfr";
+        private SerialPort serialPort;
 
         // TraceLogger für Debugging
         private TraceLogger tl;
+
+        // Variable zur Speicherung des aktuellen Azimutwerts
+        private double currentAzimuth;
+
+        //Variable des slewing zustands
+        private bool ISslewing;
+
+        //Luke Status
+        private ShutterState CurrentShutterState;
 
         // Konstruktor
         public Starwatcher_Driver()
@@ -47,6 +58,9 @@ namespace NINA_Driver_V1
             tl = new TraceLogger(logFilePath, "Starwatcher");
             tl.Enabled = true;
             tl.LogMessage("Starwatcher_Driver", "Initialisiert");
+
+            //Initialisierung des seriellen Ports
+            serialPort = new SerialPort("COM3", 115200);
         }
 
         //Registrierung-----------------------------------------------------------------
@@ -77,7 +91,6 @@ namespace NINA_Driver_V1
                     profile.Register(driverID, "Starwatcher Ben Hofer");
                 }
             }
-
 
             public static void Unregister(Type t)
             {
@@ -114,6 +127,22 @@ namespace NINA_Driver_V1
                 }
             }
         }
+
+        //Commands senden über den Serial Port ermöglichen
+        [ComVisible(false)]
+        private void SendCommand(string command)
+        {
+            if (serialPort.IsOpen && serialPort != null)
+            {
+                serialPort.WriteLine(command);
+                tl.LogMessage("SendCommand", "Command: " + command);
+                return;
+            }
+            else
+            {
+                tl.LogMessage("SendCommand", "SerialPort not open");
+            }
+        }
         //----------------------------------------------------------------------------------------
         // Connect & Disconnect
         //Diese Methoden ermöglichen es, eine Verbindung zur Kuppel herzustellen und zu trennen. Die Connected-Eigenschaft von IDomeV2 steuert
@@ -137,14 +166,88 @@ namespace NINA_Driver_V1
                 settingValue1 = profile.GetValue(driverID, "SettingName1", "", "DefaultValue1");
                 settingValue2 = profile.GetValue(driverID, "SettingName2", "", "DefaultValue2");
             }
+            serialPort.DataReceived += SerialPort_DataReceived; //Eventhandler für Datenempfang vom ESP32
+            serialPort.Open();
             connected = true;
-            tl.LogMessage("Connect","Connected to Starwatcher");
+            tl.LogMessage("Connect", "Connected to Starwatcher");
         }
 
         public void Disconnect()
         {
+            if (serialPort != null && serialPort.IsOpen)
+            {
+                serialPort.Close();
+            }
             connected = false;
-            tl.LogMessage("Disconnect","Disconnected from Starwatcher");
+            tl.LogMessage("Disconnect", "Disconnected from Starwatcher");
+        }
+        //----------------------------------------------------------------------------------------
+        //Eventhandler für Datenempfang vom ESP32
+        //Empfängt die Rückmeldungen vom ESP32 und gibt sie im TraceLogger aus
+        private void SerialPort_DataReceived(object sender, SerialDataReceivedEventArgs e)
+        {
+            try
+            {
+                //Alle verfügbaren Daten lesen
+                string data = serialPort.ReadLine();
+                tl.LogMessage("ESP32", "Received: " + data);
+                //Updated Azimuth
+                if (data.StartsWith("AZ"))
+                {
+                    string[] parts = data.Split(' ');
+                    if (parts.Length >= 2 && double.TryParse(parts[1], out double azimuth))
+                    {
+                        currentAzimuth = azimuth;
+                    }
+                }
+                //Slew Befehl wurde empfangen
+                else if (data.StartsWith("ACK SLEW")) 
+                {
+                    ISslewing = true;
+                    tl.LogMessage("ESP32", "is Slewing");
+                }
+                //Slew Befehl wurde ausgeführt
+                else if (data.StartsWith("DONE SLEW"))                 {
+                    ISslewing = false;
+                    tl.LogMessage("ESP32", "Slew Done");
+                }
+                //Luke Befehl erhalten (schließt sich)
+                else if (data.StartsWith("ACK CLOSE")) 
+                {
+                    CurrentShutterState = ShutterState.shutterClosing;
+                    tl.LogMessage("ESP32", "Shutter is closing");
+                }
+                //Luke Befehl erhalten (öffnet sich)
+                else if (data.StartsWith("ACK OPEN")) 
+                {
+                    CurrentShutterState = ShutterState.shutterOpening;
+                    tl.LogMessage("ESP32", "Shutter is opening");
+                }
+                //Luke Befehl ausgeführt (ist geschlossen)
+                else if (data.StartsWith("DONE CLOSE")) 
+                {
+                    CurrentShutterState = ShutterState.shutterClosed;
+                    tl.LogMessage("ESP32", "Shutter is closed");
+                }
+                //Luke Befehl ausgeführt (ist offen)
+                else if (data.StartsWith("DONE OPEN")) 
+                {
+                    CurrentShutterState = ShutterState.shutterOpen;
+                    tl.LogMessage("ESP32", "Shutter is open");
+                }
+                //ABORT Befehl wurde empfangen
+                else if (data.StartsWith("ACK ABORT"))
+                {
+                    ISslewing = false;
+                    CurrentShutterState = ShutterState.shutterError;
+                    tl.LogMessage("ESP32", "Abort Slew");
+                }
+
+            }
+            catch (Exception ex)
+            {
+                tl.LogMessage("ESP32", "Error: " + ex.Message);
+            }
         }
         //----------------------------------------------------------------------------------------
         //Der Rest des Codes implementiert die Methoden und Eigenschaften der IDomeV2-Schnittstelle, die für die Steuerung einer Kuppel
@@ -162,38 +265,33 @@ namespace NINA_Driver_V1
         }
         public void Park()
         {
-            //Parken wird simuliert
-            atPark = true;
+            SendCommand("PARK");
             tl.LogMessage("Park", "Parked");
         }
-        public void SetPark()
+        public bool AtHome
         {
-            tl.LogMessage("SetPark", "Set Park");
+            get { return false; }
         }
         //----------------------------------------------------------------------------------------
-        // Slew to Azimuth
-
-        /* public double Azimuth
-         {
-             get
-             {
-                 // Implementieren Sie die echte Azimuth-Abfrage
-                 return ReadAzimuthFromHardware();
-             }
-         }*/
         public void SlewToAzimuth(double Azimuth)
         {
-            tl.LogMessage("SlewToAzimuth", "Slewing to Azimuth: " + Azimuth); 
+            SendCommand("SLEW " + Azimuth);
+            tl.LogMessage("SlewToAzimuth", "Slewing to Azimuth: " + Azimuth);
         }
 
         public void AbortSlew()
         {
+            SendCommand("ABORT");
             tl.LogMessage("AbortSlew", "Abort Slew");
         }
 
         public bool Slewing
         {
-            get { return false; }
+            get { return ISslewing; }
+        }
+        public double Azimuth
+        {
+            get { return currentAzimuth; }
         }
 
         //----------------------------------------------------------------------------------------
@@ -201,40 +299,31 @@ namespace NINA_Driver_V1
 
         public void OpenShutter()
         {
-            tl.LogMessage("OpenShutter", "Open Shutter");
+            SendCommand("OPEN");
         }
         public void CloseShutter()
         {
-            tl.LogMessage("CloseShutter", "Close Shutter");
+            SendCommand("CLOSE");
         }
         public ShutterState ShutterStatus
         {
-            get { return ShutterState.shutterClosed; }
+            get { return CurrentShutterState;}
         }
 
 
         // Noch zu Implementieren
-
-
+        public void SetPark()
+        {
+            throw new ASCOM.MethodNotImplementedException("SetPark is not implemented by this driver");
+        }
         public double Altitude
         {
             get { return 0.0; }
         }
-
-        public bool AtHome
-        {
-            get { return false; }
-        }
-
-        public double Azimuth
-        {
-            get { return 0.0; }
-        }
-
         public bool CanFindHome
         {
             get { return false; }
-        }  
+        }
         public bool CanSetAltitude
         {
             get { return false; }
@@ -247,7 +336,7 @@ namespace NINA_Driver_V1
 
         public bool CanSetPark
         {
-            get { return true; }
+            get { return false; }
         }
 
         public bool CanSetShutter
@@ -268,7 +357,7 @@ namespace NINA_Driver_V1
         public void FindHome()
         {
             tl.LogMessage("FindHome", "Find Home");
-        }      
+        }
 
         public bool Slaved
         {
@@ -279,7 +368,7 @@ namespace NINA_Driver_V1
         public void SlewToAltitude(double Altitude)
         {
             tl.LogMessage("SlewToAltitude", "Slew to Altitude: " + Altitude);
-        }      
+        }
 
         public void SyncToAzimuth(double Azimuth)
         {
