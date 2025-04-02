@@ -195,10 +195,7 @@ namespace NINA_Driver_V1
                 if (data.StartsWith("AZ"))
                 {
                     string[] parts = data.Split(' ');
-                    if (parts.Length >= 2 && double.TryParse(parts[1], out double azimuth))
-                    {
-                        currentAzimuth = azimuth;
-                    }
+                    currentAzimuth = Convert.ToDouble(parts[1]);
                 }
                 //Slew Befehl wurde empfangen
                 else if (data.StartsWith("ACK SLEW")) 
@@ -207,7 +204,8 @@ namespace NINA_Driver_V1
                     tl.LogMessage("ESP32", "is Slewing");
                 }
                 //Slew Befehl wurde ausgeführt
-                else if (data.StartsWith("DONE SLEW"))                 {
+                else if (data.StartsWith("DONE SLEW"))                 
+                {
                     ISslewing = false;
                     tl.LogMessage("ESP32", "Slew Done");
                 }
@@ -266,7 +264,7 @@ namespace NINA_Driver_V1
         public void Park()
         {
             SendCommand("PARK");
-            tl.LogMessage("Park", "Parked");
+            tl.LogMessage("Sent command: ", "PARK");
         }
         public bool AtHome
         {
@@ -276,13 +274,13 @@ namespace NINA_Driver_V1
         public void SlewToAzimuth(double Azimuth)
         {
             SendCommand("SLEW " + Azimuth);
-            tl.LogMessage("SlewToAzimuth", "Slewing to Azimuth: " + Azimuth);
+            tl.LogMessage("Sent command: ", "SLEW to Azimuth = " + Azimuth);
         }
 
         public void AbortSlew()
         {
             SendCommand("ABORT");
-            tl.LogMessage("AbortSlew", "Abort Slew");
+            tl.LogMessage("Sent command: ", "Abort Slew");
         }
 
         public bool Slewing
@@ -300,10 +298,12 @@ namespace NINA_Driver_V1
         public void OpenShutter()
         {
             SendCommand("OPEN");
+            tl.LogMessage("Sent command: ", "OPEN");
         }
         public void CloseShutter()
         {
             SendCommand("CLOSE");
+            tl.LogMessage("Sent command: ", "CLOSE");
         }
         public ShutterState ShutterStatus
         {
